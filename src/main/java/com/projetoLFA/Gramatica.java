@@ -11,20 +11,6 @@ public class Gramatica{
     protected Map<SimboloNaoTerminal, Set<Producao>> producoes;
     protected SimboloTerminal simboloLambda;
 
-    public Gramatica(){
-        simbolos = new HashMap<>();
-        producoes = new HashMap<>();
-        simboloInicial = null;
-        simboloLambda = (SimboloTerminal) adicionarSimbolo(".");
-    }
-
-    public Gramatica(Map<String, Simbolo> simbolos, SimboloNaoTerminal simboloInicial, Map<SimboloNaoTerminal, Set<Producao>> producoes){
-        this.simbolos = simbolos;
-        this.producoes = producoes;
-        this.simboloInicial = simboloInicial;
-        simboloLambda = (SimboloTerminal) adicionarSimbolo(".");
-    }
-
     public Gramatica(String textoGramatica){
         simbolos = new HashMap<String, Simbolo>();
         producoes = new HashMap<SimboloNaoTerminal, Set<Producao>>();
@@ -32,6 +18,54 @@ public class Gramatica{
         simboloLambda = (SimboloTerminal) adicionarSimbolo(".");
 
         lerGramatica(textoGramatica);
+    }
+
+    public Gramatica(Gramatica umaGramatica){
+
+        this.simbolos = new HashMap<String, Simbolo>();
+        this.producoes = new HashMap<SimboloNaoTerminal, Set<Producao>>();
+        this.simboloInicial = null;
+        this.simboloLambda = (SimboloTerminal) adicionarSimbolo(".");
+
+        // copia dos simbolos
+        for (Map.Entry<String, Simbolo> simbolos : umaGramatica.simbolos.entrySet()){
+
+            String chaveSimbolo = simbolos.getKey();
+
+            Simbolo instanciaSimbolo = simbolos.getValue();
+
+            Simbolo copiaSimbolo = instanciaSimbolo instanceof SimboloTerminal ?
+                new SimboloTerminal((SimboloTerminal) instanciaSimbolo) : new SimboloNaoTerminal((SimboloNaoTerminal)instanciaSimbolo);
+
+            this.simbolos.put(chaveSimbolo, copiaSimbolo);
+        }
+
+        // simboloInicial recebe a referencia da instancia do simbolo inicial da gramatica
+        String chaveSimboloInicial = umaGramatica.simboloInicial.getValor();
+        this.simboloInicial = (SimboloNaoTerminal) this.simbolos.get(chaveSimboloInicial);
+
+        // copia das regras
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> producao : umaGramatica.producoes.entrySet()){
+
+            // busca da referencia da variavel da producao na nova gramatica
+            SimboloNaoTerminal variavelProducao = producao.getKey();
+            SimboloNaoTerminal copiavariavelProducao = (SimboloNaoTerminal) this.simbolos.get(variavelProducao.getValor());
+            Set<Producao> regrasProducao = producao.getValue();
+
+            // copia das producoes de determinada regra
+            for (Producao regra : regrasProducao) {
+
+                // array com as referencias aos simbolos da gramatica (define uma regra)
+                List<Simbolo> arrSimbolos = new ArrayList<>();
+
+                for (Simbolo simbolo : regra.getSimbolos())
+                    arrSimbolos.add(this.simbolos.get(simbolo.getValor()));
+
+                this.adicionarProducao(copiavariavelProducao, arrSimbolos);
+                
+            }
+
+        }
     }
 
     public Simbolo adicionarSimbolo(String valorSimbolo){
@@ -115,47 +149,5 @@ public class Gramatica{
 
         }
     }   
-
-
-    public Gramatica copiaGramatica(){
-
-        Gramatica copiaGramatica = new Gramatica();
-
-        for (Map.Entry<String, Simbolo> simbolos : this.simbolos.entrySet()){
-
-            String chaveSimbolo = simbolos.getKey();
-
-            Simbolo instanciaSimbolo = simbolos.getValue();
-
-            Simbolo copiaSimbolo = instanciaSimbolo instanceof SimboloTerminal ?
-                new SimboloTerminal((SimboloTerminal) instanciaSimbolo) : new SimboloNaoTerminal((SimboloNaoTerminal)instanciaSimbolo);
-
-            copiaGramatica.simbolos.put(chaveSimbolo, copiaSimbolo);
-        }
-
-        String chaveSimboloInicial = this.simboloInicial.getValor();
-        copiaGramatica.simboloInicial = (SimboloNaoTerminal)copiaGramatica.simbolos.get(chaveSimboloInicial);
-
-        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> producao : this.producoes.entrySet()){
-
-            SimboloNaoTerminal variavelProducao = producao.getKey();
-            SimboloNaoTerminal copiavariavelProducao = (SimboloNaoTerminal)copiaGramatica.simbolos.get(variavelProducao.getValor());
-            Set<Producao> regrasProducao = producao.getValue();
-
-            for (Producao regra : regrasProducao) {
-
-                List<Simbolo> arrSimbolos = new ArrayList<>();
-
-                for (Simbolo simbolo : regra.getSimbolos())
-                    arrSimbolos.add(copiaGramatica.simbolos.get(simbolo.getValor()));
-
-                copiaGramatica.adicionarProducao(copiavariavelProducao, arrSimbolos);
-                
-            }
-
-        }
-
-        return copiaGramatica;
-    }
 
 }

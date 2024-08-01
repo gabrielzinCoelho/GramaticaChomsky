@@ -8,7 +8,7 @@ import org.paukov.combinatorics3.Generator;
 public class GramaticaChomsky extends Gramatica{
     
     public GramaticaChomsky(Gramatica gramatica){
-        super(gramatica.simbolos, gramatica.simboloInicial, gramatica.producoes);
+        super(gramatica);
         aplicarFormaNormal();
 
     }
