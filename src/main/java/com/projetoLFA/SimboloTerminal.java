@@ -6,6 +6,10 @@ public class SimboloTerminal extends Simbolo {
         super(valor);
     }
 
+    public String getValor(){
+        return Character.toString(valor);
+    }
+
     @Override
     public SimboloTerminal clone(){
         return (SimboloTerminal)super.clone();

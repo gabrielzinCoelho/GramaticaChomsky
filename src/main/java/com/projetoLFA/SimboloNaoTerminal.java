@@ -23,15 +23,6 @@ public class SimboloNaoTerminal extends Simbolo{
     }
 
     @Override
-    public String toString(){
-        if(digito == null)
-            return Character.toString(valor);
-            // return ((Simbolo)this).toString();
-        else
-            return Character.toString(valor) + Character.toString(digito);
-    }
-
-    @Override
     public SimboloNaoTerminal clone(){
         SimboloNaoTerminal copia = (SimboloNaoTerminal)super.clone();
         

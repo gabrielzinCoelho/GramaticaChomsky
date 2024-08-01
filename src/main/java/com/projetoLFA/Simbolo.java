@@ -28,9 +28,7 @@ public abstract class Simbolo implements Cloneable{
         this.valor = valor;
     }
 
-    public String getValor(){
-        return Character.toString(valor);
-    }
+    public abstract String getValor();
 
     @Override
     public boolean equals(Object objeto){
@@ -38,7 +36,7 @@ public abstract class Simbolo implements Cloneable{
         if(this == objeto) // ambos possuem a mesma referência
             return true;
         
-        if (objeto == null || getClass() != objeto.getClass()) //!(objeto instanceof Simbolo)
+        if (objeto == null || getClass() != objeto.getClass())
             return false;
         
         Simbolo umSimbolo = (Simbolo) objeto;
@@ -53,7 +51,7 @@ public abstract class Simbolo implements Cloneable{
 
     @Override
     public String toString(){
-        return String.valueOf(valor);
+        return getValor();
     }
 
     @Override
