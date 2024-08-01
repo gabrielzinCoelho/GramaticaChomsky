@@ -6,13 +6,13 @@ public class SimboloTerminal extends Simbolo {
         super(valor);
     }
 
-    public String getValor(){
-        return Character.toString(valor);
+    // construtor de copia
+    public SimboloTerminal(SimboloTerminal umSimbolo){
+        super(umSimbolo.valor);
     }
 
-    @Override
-    public SimboloTerminal clone(){
-        return (SimboloTerminal)super.clone();
+    public String getValor(){
+        return Character.toString(valor);
     }
 
 }

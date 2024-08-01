@@ -124,8 +124,13 @@ public class Gramatica{
         for (Map.Entry<String, Simbolo> simbolos : this.simbolos.entrySet()){
 
             String chaveSimbolo = simbolos.getKey();
-            Simbolo simbolo = simbolos.getValue().clone(); // copia dos simbolos (interface cloneable)
-            copiaGramatica.simbolos.put(chaveSimbolo, simbolo);
+
+            Simbolo instanciaSimbolo = simbolos.getValue();
+
+            Simbolo copiaSimbolo = instanciaSimbolo instanceof SimboloTerminal ?
+                new SimboloTerminal((SimboloTerminal) instanciaSimbolo) : new SimboloNaoTerminal((SimboloNaoTerminal)instanciaSimbolo);
+
+            copiaGramatica.simbolos.put(chaveSimbolo, copiaSimbolo);
         }
 
         String chaveSimboloInicial = this.simboloInicial.getValor();

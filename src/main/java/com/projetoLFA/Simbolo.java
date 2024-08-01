@@ -1,6 +1,6 @@
 package com.projetoLFA;
 
-public abstract class Simbolo implements Cloneable{
+public abstract class Simbolo{
 
     protected Character valor;
 
@@ -52,15 +52,6 @@ public abstract class Simbolo implements Cloneable{
     @Override
     public String toString(){
         return getValor();
-    }
-
-    @Override
-    public Simbolo clone(){
-        try{
-            return (Simbolo) super.clone();
-        }catch (CloneNotSupportedException err){
-            throw new AssertionError();
-        }
     }
 
 }

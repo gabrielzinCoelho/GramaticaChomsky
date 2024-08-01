@@ -14,6 +14,11 @@ public class SimboloNaoTerminal extends Simbolo{
         this.digito = digito; 
     }
 
+    public SimboloNaoTerminal(SimboloNaoTerminal umSimbolo){
+        super(umSimbolo.valor);
+        this.digito = umSimbolo.digito;
+    }
+
     @Override
     public String getValor(){
         if(digito == null)
@@ -21,14 +26,4 @@ public class SimboloNaoTerminal extends Simbolo{
         else
             return Character.toString(valor) + Character.toString(digito);
     }
-
-    @Override
-    public SimboloNaoTerminal clone(){
-        SimboloNaoTerminal copia = (SimboloNaoTerminal)super.clone();
-        
-        copia.digito = this.digito == null ? null : Character.valueOf(this.digito);
-        
-        return copia;
-    }
-
 }
