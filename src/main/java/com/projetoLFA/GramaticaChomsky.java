@@ -8,9 +8,8 @@ import org.paukov.combinatorics3.Generator;
 public class GramaticaChomsky extends Gramatica{
     
     public GramaticaChomsky(Gramatica gramatica){
-        super(gramatica);
+        super(gramatica); // invoca construtor de copia
         aplicarFormaNormal();
-
     }
 
     private void aplicarFormaNormal(){
@@ -38,6 +37,7 @@ public class GramaticaChomsky extends Gramatica{
                 break;
         }
 
+        //S1 -> S
         if(possuiRecursao){
             SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S1");
             adicionarProducao(novoSimboloInicial, new ArrayList<Simbolo>(Arrays.asList(simboloInicial)));
@@ -56,13 +56,14 @@ public class GramaticaChomsky extends Gramatica{
             Set<Producao> regrasProducao = producao.getValue(); 
             Set<Producao> copiaRegrasProducao = new HashSet<>(regrasProducao);    
 
-            for(Producao regra : copiaRegrasProducao){
+            for(Producao regra : copiaRegrasProducao){ // iterar sobre as regras antigas
 
                 List<Simbolo> simbolosRegra = regra.getSimbolos();
                 List<Integer> indexAnulaveis = new ArrayList<>();
 
                 int contadorIndex = 0;
 
+                // mapear indices que podem ser omitidos para gerar novas regras
                 for(Simbolo simbolo : simbolosRegra){
                     if(anulaveis.contains(simbolo))
                         indexAnulaveis.add(contadorIndex);
@@ -76,7 +77,8 @@ public class GramaticaChomsky extends Gramatica{
                     List<List<Simbolo>> novasRegras = criaCombinacaoRegra(simbolosRegra, indexAnulaveis, i);
 
                     for(List<Simbolo> novaRegra : novasRegras){
-
+                        
+                        // regra lambda apenas no simbolo inicial
                         if(novaRegra.size() == 0){
                             if(variavelProducao == simboloInicial){
                                 adicionarProducao(simboloInicial, Arrays.asList(simboloLambda));
