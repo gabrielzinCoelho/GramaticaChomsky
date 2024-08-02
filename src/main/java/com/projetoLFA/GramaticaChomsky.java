@@ -62,7 +62,6 @@ public class GramaticaChomsky extends Gramatica{
                 List<Integer> indexAnulaveis = new ArrayList<>();
 
                 int contadorIndex = 0;
-
                 // mapear indices que podem ser omitidos para gerar novas regras
                 for(Simbolo simbolo : simbolosRegra){
                     if(anulaveis.contains(simbolo))
@@ -70,68 +69,35 @@ public class GramaticaChomsky extends Gramatica{
                     contadorIndex++;
                 }
 
-                int quantidadeAnulaveis = indexAnulaveis.size();
-                
-                for(int i = 1; i<=quantidadeAnulaveis; i++){
+                List<List<Simbolo>> novasRegras = UtilitariosChomsky.criaCombinacaoRegra(simbolosRegra, indexAnulaveis);
 
-                    List<List<Simbolo>> novasRegras = criaCombinacaoRegra(simbolosRegra, indexAnulaveis, i);
-
-                    for(List<Simbolo> novaRegra : novasRegras){
-                        
-                        // regra lambda apenas no simbolo inicial
-                        if(novaRegra.size() == 0){
-                            if(variavelProducao == simboloInicial){
-                                adicionarProducao(simboloInicial, Arrays.asList(simboloLambda));
-                            }
-                        }else{
-                            adicionarProducao(variavelProducao, novaRegra);
+                for(List<Simbolo> novaRegra : novasRegras){
+                    
+                    // regra lambda apenas no simbolo inicial
+                    if(novaRegra.size() == 0){
+                        if(variavelProducao == simboloInicial){
+                            adicionarProducao(simboloInicial, Arrays.asList(simboloLambda));
                         }
-
+                    }else{
+                        adicionarProducao(variavelProducao, novaRegra);
                     }
-
-                }
-                
+                }            
             }
 
             // remover produções lambda (exceto simbolo inicial)
             if (producao.getKey() != simboloInicial) {
 
-                // evitar ConcurrentModificationException
-                Iterator<Producao> iterator = regrasProducao.iterator();
-                while (iterator.hasNext()) {
-                    Producao regra = iterator.next();
-                    if (regra.getSimbolos().contains(simboloLambda)) {
-                        iterator.remove();
-                    }
-                }
-
+                producoes.put(
+                    variavelProducao, 
+                    regrasProducao
+                        .stream()
+                        .filter(regra -> !regra.getSimbolos().contains(simboloLambda))
+                        .collect(Collectors.toSet())
+                );
             }
 
         }
 
-    }
-
-    private List<List<Simbolo>> criaCombinacaoRegra(List<Simbolo> regraOriginal, List<Integer> indexAnulaveis, int quantidadeAnulacoes){
-
-        List<List<Simbolo>> novasRegras = Generator.combination(indexAnulaveis)
-        .simple(quantidadeAnulacoes)
-        .stream()
-        .map(combinacaoAnulaveis -> {
-
-            List<Simbolo> novaRegra = new ArrayList<>();
-
-            for(int i = 0; i < regraOriginal.size(); i++){
-                if(!combinacaoAnulaveis.contains(i)){
-                    novaRegra.add(regraOriginal.get(i));
-                }
-            }
-
-            return novaRegra;
-        })
-        .collect(Collectors.toList());
-
-        return novasRegras;
-    
     }
 
     private Set<SimboloNaoTerminal> variaveisAnulaveis(){
@@ -162,7 +128,7 @@ public class GramaticaChomsky extends Gramatica{
     
                 for(Producao regra : regrasProducao){
     
-                    if(regraEhCombinacaoConjunto(regra.getSimbolos(), prevAnulaveis)){
+                    if(UtilitariosChomsky.regraEhCombinacaoConjunto(regra.getSimbolos(), prevAnulaveis)){
                         anulaveis.add(variavelProducao);
                         break;
                     }
@@ -176,24 +142,63 @@ public class GramaticaChomsky extends Gramatica{
 
     }
 
-    private boolean regraEhCombinacaoConjunto(List<? extends Simbolo> regra, Set<? extends Simbolo> conjunto){
+    private static class UtilitariosChomsky{
 
-        for(Simbolo simboloRegra : regra){
+        // verifica se uma regra é formada exclusivamente por simbolos de um determinado conjunto  
+        static boolean regraEhCombinacaoConjunto(List<? extends Simbolo> regra, Set<? extends Simbolo> conjunto){
 
-            boolean simboloPertence = false;
+            for(Simbolo simboloRegra : regra){
 
-            for(Simbolo simboloConjunto : conjunto)
-                if(simboloRegra.equals(simboloConjunto)){
-                    simboloPertence = true;
-                    break;
-                }
-            
-            if(!simboloPertence)
-                return false;
-            
+                boolean simboloPertence = false;
+
+                for(Simbolo simboloConjunto : conjunto)
+                    if(simboloRegra.equals(simboloConjunto)){
+                        simboloPertence = true;
+                        break;
+                    }
+                
+                if(!simboloPertence)
+                    return false;
+                
+            }
+
+            return true;
         }
 
-        return true;
+        static List<List<Simbolo>> criaCombinacaoRegra(List<Simbolo> regraOriginal, List<Integer> indexAnulaveis){
+
+
+            int quantidadeAnulaveis = indexAnulaveis.size();
+            List<List<Simbolo>> novasRegras = new ArrayList<>();
+                
+            for(int numAnulaveis = 1; numAnulaveis<=quantidadeAnulaveis; numAnulaveis++){
+
+                novasRegras.addAll(
+                    Generator.combination(indexAnulaveis)
+                        .simple(numAnulaveis)
+                        .stream()
+                        .map(combinacaoAnulaveis -> {
+                
+                            List<Simbolo> novaRegra = new ArrayList<>();
+                
+                            for(int indexRegra = 0; indexRegra < regraOriginal.size(); indexRegra++){
+
+                                //simbolo do index não faz parte da combinacao de anulaveis
+                                if(!combinacaoAnulaveis.contains(indexRegra)){
+                                    novaRegra.add(regraOriginal.get(indexRegra));
+                                }
+                            }
+                
+                            return novaRegra;
+                        })
+                        .collect(Collectors.toList())
+                );
+
+            }
+    
+            return novasRegras;
+        
+        }
 
     }
 
