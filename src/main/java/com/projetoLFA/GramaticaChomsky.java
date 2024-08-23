@@ -1,6 +1,7 @@
 package com.projetoLFA;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.paukov.combinatorics3.Generator;
@@ -15,6 +16,7 @@ public class GramaticaChomsky extends Gramatica{
     private void aplicarFormaNormal(){
         removerRecursaoSimboloInicial();
         removerLambda();
+        removerCadeia();
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -142,6 +144,103 @@ public class GramaticaChomsky extends Gramatica{
 
     }
 
+    private void removerCadeia(){
+        
+        Map<SimboloNaoTerminal, Set<SimboloNaoTerminal>> cadeiasEncontradas = calculaCadeias();
+        removerCadeias();
+        copiaRegrasCadeia(cadeiasEncontradas);
+
+    }
+
+
+    private Map<SimboloNaoTerminal, Set<SimboloNaoTerminal>> calculaCadeias(){
+
+        Map<SimboloNaoTerminal, Set<SimboloNaoTerminal>> cadeiasVariaveis = new HashMap<>();
+        
+        for(SimboloNaoTerminal variavelProducao : this.producoes.keySet()){
+            
+            Set<SimboloNaoTerminal> cadeiaVariavelProducao = calculaCadeiaVariavel(variavelProducao);
+
+            cadeiasVariaveis.put(variavelProducao, cadeiaVariavelProducao);
+        }
+
+        return cadeiasVariaveis;
+    }
+
+    private Set<SimboloNaoTerminal> calculaCadeiaVariavel(SimboloNaoTerminal variavel){
+
+        Set<SimboloNaoTerminal> cadeia = new HashSet<>(), prevCadeia, novoCadeia = new HashSet<>();
+        cadeia.add(variavel);
+        novoCadeia.add(variavel);
+
+        do{  
+
+            prevCadeia = new HashSet<>(cadeia);
+
+            for(SimboloNaoTerminal variavelCadeia : novoCadeia){
+
+                Set<Producao> producoesVariavelCadeia = this.producoes.get(variavelCadeia);
+
+                for (Producao regra : producoesVariavelCadeia) {
+
+                    //ehRegraCadeia
+                    if(UtilitariosChomsky.ehRegraCadeia(regra)){
+
+                        SimboloNaoTerminal cadeiaEncontrada = (SimboloNaoTerminal) regra.getPrimeiroSimbolo();
+                        cadeia.add(cadeiaEncontrada);
+                    }
+                       
+                }
+            }
+
+            // novo = cadeia - prev
+            novoCadeia = new HashSet<>(cadeia);
+            novoCadeia.removeAll(prevCadeia);
+
+            
+        }while(novoCadeia.size() > 0);
+
+        return cadeia;
+
+    }
+
+    private void removerCadeias(){
+
+        for(Map.Entry<SimboloNaoTerminal, Set<Producao>> producao : this.producoes.entrySet()){
+
+            SimboloNaoTerminal variavelProducao = producao.getKey();
+        
+            Set<Producao> producoesSemCadeia = producao.getValue().stream()
+                .filter(p -> !UtilitariosChomsky.ehRegraCadeia(p))
+                .collect(Collectors.toSet());
+
+            this.producoes.put(variavelProducao, producoesSemCadeia);
+        }
+
+    }
+
+    private void copiaRegrasCadeia(Map<SimboloNaoTerminal, Set<SimboloNaoTerminal>> cadeiasEncontradas){
+
+        Map<SimboloNaoTerminal, Set<Producao>> producoesOriginais = new HashMap<>(this.producoes);
+
+        for(Map.Entry<SimboloNaoTerminal, Set<SimboloNaoTerminal>> cadeia : cadeiasEncontradas.entrySet()){
+            SimboloNaoTerminal variavel = cadeia.getKey();
+            Set<SimboloNaoTerminal> variaveisCadeia = cadeia.getValue();
+            
+            Set<Producao> conjuntoProducoes = this.producoes.get(variavel);
+
+            for(SimboloNaoTerminal variavelCadeia : variaveisCadeia){
+                if(variavelCadeia != variavel){
+
+                    Set<Producao> conjuntoProducoesCadeia = producoesOriginais.get(variavelCadeia);
+                    conjuntoProducoes.addAll(conjuntoProducoesCadeia);
+
+                }
+            }
+        }
+
+    }
+
     private static class UtilitariosChomsky{
 
         // verifica se uma regra é formada exclusivamente por simbolos de um determinado conjunto  
@@ -165,8 +264,9 @@ public class GramaticaChomsky extends Gramatica{
             return true;
         }
 
+        // dada uma regra e uma lista de indices anulaveis referentes à regra, retorna todas possiveis regras
+        // criadas considerando a possibilidade de anular uma variavel anulavel ou nao
         static List<List<Simbolo>> criaCombinacaoRegra(List<Simbolo> regraOriginal, List<Integer> indexAnulaveis){
-
 
             int quantidadeAnulaveis = indexAnulaveis.size();
             List<List<Simbolo>> novasRegras = new ArrayList<>();
@@ -197,7 +297,11 @@ public class GramaticaChomsky extends Gramatica{
             }
     
             return novasRegras;
-        
+        }
+
+        // verifica se uma regra eh Regra de Cadeia
+        static boolean ehRegraCadeia(Producao regra){
+            return regra.tamanho() == 1 && SimboloNaoTerminal.ehSimboloNaoTerminal(regra.getPrimeiroSimbolo());
         }
 
     }

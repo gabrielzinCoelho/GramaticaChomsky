@@ -92,15 +92,13 @@ public class Gramatica{
 
         StringBuilder str = new StringBuilder();
 
-        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> linhaGramatica : producoes.entrySet()){
-
-            SimboloNaoTerminal variavel = linhaGramatica.getKey();
-            Set<Producao> producao = linhaGramatica.getValue();
-
-            str.append(variavel.toString()).append(" -> ");
-            str.append(producao.toString()).append("\n");
-
-        }
+        producoes.keySet().stream()
+            .sorted()
+            .forEach(variavel -> {
+                Set<Producao> producao = this.producoes.get(variavel);
+                str.append(variavel.toString()).append(" -> ");
+                str.append(producao.toString()).append("\n");
+            });
 
         return str.toString();
     }

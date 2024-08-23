@@ -18,6 +18,10 @@ public class Producao {
         return new ArrayList<Simbolo>(simbolos);
     }
 
+    public Simbolo getPrimeiroSimbolo(){
+        return simbolos.get(0);
+    }
+
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder(); // evitar criacao de novo objeto a cada concatenacao
@@ -45,6 +49,10 @@ public class Producao {
     @Override
     public int hashCode(){
         return Objects.hash(simbolos);
+    }
+
+    public int tamanho(){
+        return simbolos.size();
     }
 
 }
