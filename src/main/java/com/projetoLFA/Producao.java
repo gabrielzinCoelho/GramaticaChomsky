@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Producao {
+public class Producao implements Comparable<Producao>{
     
     private List<Simbolo> simbolos;
 
@@ -53,6 +53,12 @@ public class Producao {
 
     public int tamanho(){
         return simbolos.size();
+    }
+
+
+    @Override
+    public int compareTo(Producao outraProducao){
+        return this.simbolos.toString().compareTo(outraProducao.simbolos.toString());
     }
 
 }
