@@ -1,6 +1,6 @@
 package com.projetoLFA;
 
-public abstract class Simbolo{
+public abstract class Simbolo implements Comparable<Simbolo>{
 
     protected Character valor;
 
@@ -52,6 +52,11 @@ public abstract class Simbolo{
     @Override
     public String toString(){
         return getValor();
+    }
+
+    @Override
+    public int compareTo(Simbolo outroSimbolo){
+        return toString().compareTo(outroSimbolo.toString());
     }
 
 }

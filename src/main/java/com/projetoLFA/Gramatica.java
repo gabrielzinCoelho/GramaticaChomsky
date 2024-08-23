@@ -2,6 +2,8 @@ package com.projetoLFA;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 
 public class Gramatica{
@@ -92,15 +94,21 @@ public class Gramatica{
 
         StringBuilder str = new StringBuilder();
 
-        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> linhaGramatica : producoes.entrySet()){
+        producoes.keySet().stream()
+            .sorted()
+            .forEach(variavel -> {
+                Set<Producao> producao = this.producoes.get(variavel);
 
-            SimboloNaoTerminal variavel = linhaGramatica.getKey();
-            Set<Producao> producao = linhaGramatica.getValue();
+                str.append(variavel.toString()).append(" -> ");
 
-            str.append(variavel.toString()).append(" -> ");
-            str.append(producao.toString()).append("\n");
+                List<String> listaProducoes = producao.stream()
+                    .sorted()
+                    .map(p -> p.toString())
+                    .collect(Collectors.toList());
+                
 
-        }
+                str.append(String.join(", ", listaProducoes)).append("\n");
+            });
 
         return str.toString();
     }
