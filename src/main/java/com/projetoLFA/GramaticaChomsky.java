@@ -336,7 +336,6 @@ public class GramaticaChomsky extends Gramatica{
                 }
             }
         }
-        System.out.println(this);
         Iterator<SimboloNaoTerminal> iterador = producoes.keySet().iterator();
         while (iterador.hasNext()) {
             SimboloNaoTerminal regra = iterador.next();

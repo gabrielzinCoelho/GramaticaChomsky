@@ -107,7 +107,7 @@ public class Gramatica{
                     .collect(Collectors.toList());
                 
 
-                str.append(String.join(", ", listaProducoes)).append("\n");
+                str.append(String.join(" | ", listaProducoes)).append("\n");
             });
 
         return str.toString();

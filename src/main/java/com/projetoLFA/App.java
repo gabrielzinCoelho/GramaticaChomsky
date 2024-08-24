@@ -14,9 +14,8 @@ public class App
             Scanner texto = new Scanner(arquivo);
             while (texto.hasNextLine()) {
                 String linha = texto.nextLine();
-                linha = linha.replace(' ', '\0');
+                linha = linha.replace(" ", "");
                 textoGramatica += (linha + "\n");
-                
             }
             texto.close();
         } catch (FileNotFoundException e) {
@@ -27,6 +26,5 @@ public class App
         Gramatica gramatica = new Gramatica(textoGramatica);
         GramaticaChomsky gramaticaChomsky = new GramaticaChomsky(gramatica);
         System.out.println(gramaticaChomsky);
-
     }
 }
