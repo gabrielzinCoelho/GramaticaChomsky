@@ -3,6 +3,7 @@ package com.projetoLFA;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Producao implements Comparable<Producao>{
     
@@ -59,6 +60,15 @@ public class Producao implements Comparable<Producao>{
     @Override
     public int compareTo(Producao outraProducao){
         return this.simbolos.toString().compareTo(outraProducao.simbolos.toString());
+    }
+
+    public boolean isTerminal(Set<SimboloNaoTerminal> geramTerminal){
+        for (Simbolo simbolo : simbolos) {
+            if ((simbolo instanceof SimboloNaoTerminal) && !geramTerminal.contains(simbolo)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

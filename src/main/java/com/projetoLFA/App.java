@@ -1,16 +1,30 @@
 package com.projetoLFA;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class App 
 {
     public static void main(String[] args){
 
-        String[] textosGramatica = new String[]{
-            "S->aS|bS|C|D\nC->c|.\nD->abc\nD->.",
-            "S->aA|bAB\nA->abC|.\nB->Ac|AA\nC->aBC|aB",
-            "S->ACA|CA|AA|AC|A|C|.\nA->aAa|aa|B|C\nB->bB|b\nC->cC|c\n",
-            "S->aS|b|A\nA->aA|a|C\nB->a|b\nC->c|B\nD->dD|B"
-        };
-        Gramatica gramatica = new Gramatica(textosGramatica[3]);
+        String textoGramatica = "";
+        try {
+            File arquivo = new File(args[0]);
+            Scanner texto = new Scanner(arquivo);
+            while (texto.hasNextLine()) {
+                String linha = texto.nextLine();
+                linha = linha.replace(' ', '\0');
+                textoGramatica += (linha + "\n");
+                
+            }
+            texto.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Ocorreu um erro.");
+            e.printStackTrace();
+        }
+
+        Gramatica gramatica = new Gramatica(textoGramatica);
         GramaticaChomsky gramaticaChomsky = new GramaticaChomsky(gramatica);
         System.out.println(gramaticaChomsky);
 

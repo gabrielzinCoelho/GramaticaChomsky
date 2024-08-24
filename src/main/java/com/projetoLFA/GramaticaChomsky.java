@@ -17,6 +17,7 @@ public class GramaticaChomsky extends Gramatica{
         removerRecursaoSimboloInicial();
         removerLambda();
         removerCadeia();
+        removerSemTerminal();
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -306,4 +307,42 @@ public class GramaticaChomsky extends Gramatica{
 
     }
 
+    private void removerSemTerminal(){
+
+        Set<SimboloNaoTerminal> term = new HashSet<>();
+        Set<SimboloNaoTerminal> anterior = new HashSet<>();
+        
+        // encontra regras que contem alguma producao composta de terminais
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : producoes.entrySet()) {
+            Set<Producao> producoesDaRegra = regra.getValue();
+            for (Producao producao : producoesDaRegra) {
+                if (producao.isTerminal(term)){
+                    term.add(regra.getKey());
+                    break;
+                }
+            }
+        }
+        
+        // encontra regras que possuem alguma producao que gera terminais
+        while (!anterior.equals(term)){
+            for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : producoes.entrySet()) {
+                Set<Producao> producoesDaRegra = regra.getValue();
+                anterior.addAll(term);
+                for (Producao producao : producoesDaRegra) {
+                    if (producao.isTerminal(term)){
+                        term.add(regra.getKey());
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println(this);
+        Iterator<SimboloNaoTerminal> iterador = producoes.keySet().iterator();
+        while (iterador.hasNext()) {
+            SimboloNaoTerminal regra = iterador.next();
+            if (!term.contains(regra)){
+                iterador.remove();
+            }
+        }
+    }
 }
