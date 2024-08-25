@@ -8,8 +8,11 @@ import org.paukov.combinatorics3.Generator;
 
 public class GramaticaChomsky extends Gramatica{
     
+    int qtdRegraT;
+    
     public GramaticaChomsky(Gramatica gramatica){
         super(gramatica); // invoca construtor de copia
+        qtdRegraT = 0;
         aplicarFormaNormal();
     }
 
@@ -407,9 +410,7 @@ public class GramaticaChomsky extends Gramatica{
                 if (producao.containsTerminal() && producao.tamanho() > 1) {
                     List<Simbolo> arrSimbolos = new ArrayList<>(); // simbolos da producao atualizada
 
-                    Iterator<Simbolo> itSimbolo = producao.getSimbolos().iterator();
-                    while (itSimbolo.hasNext()) {
-                        Simbolo simbolo = itSimbolo.next();
+                    for (Simbolo simbolo : producao.getSimbolos()) {
                         if (simbolo instanceof SimboloTerminal) {
                             // adiciona "A'" como simbolo se encontra "a"
                             String strNovoSimbolo = simbolo.toString().toUpperCase() + "'";
@@ -422,12 +423,10 @@ public class GramaticaChomsky extends Gramatica{
                         } else {
                             arrSimbolos.add(simbolo);
                         }
-                        if (!itSimbolo.hasNext()){
-                            // troca a producao "wav" por "wA'v"
-                            removerProducao(regra.getKey(), producao);
-                            adicionarProducao(regra.getKey(), arrSimbolos);
-                        }
                     }
+                    // troca a producao "wav" por "wA'v"
+                    removerProducao(regra.getKey(), producao);
+                    adicionarProducao(regra.getKey(), arrSimbolos);
                 }
             }
         }
