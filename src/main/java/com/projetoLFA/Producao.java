@@ -62,13 +62,22 @@ public class Producao implements Comparable<Producao>{
         return this.simbolos.toString().compareTo(outraProducao.simbolos.toString());
     }
 
-    public boolean isTerminal(Set<SimboloNaoTerminal> geramTerminal){
+    public boolean geraTerminal(Set<SimboloNaoTerminal> geramTerminal){
         for (Simbolo simbolo : simbolos) {
-            if ((simbolo instanceof SimboloNaoTerminal) && geramTerminal != null && !geramTerminal.contains(simbolo)){
+            if ((simbolo instanceof SimboloNaoTerminal) && (geramTerminal == null || !geramTerminal.contains(simbolo))){
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean containsTerminal(){
+        for (Simbolo simbolo : simbolos) {
+            if (simbolo instanceof SimboloTerminal){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

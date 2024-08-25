@@ -20,8 +20,8 @@ public class GramaticaChomsky extends Gramatica{
             removerLambda();
             removerCadeia();
             removerSemTerminal();
-            removerProducoesInuteis();
             removerNaoReach();
+            removerTerminalComposto();
         }  
             
     }
@@ -366,7 +366,7 @@ public class GramaticaChomsky extends Gramatica{
         for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : producoes.entrySet()) {
             Set<Producao> producoesDaRegra = regra.getValue();
             for (Producao producao : producoesDaRegra) {
-                if (producao.isTerminal(term)){
+                if (producao.geraTerminal(term)){
                     term.add(regra.getKey());
                     break;
                 }
@@ -379,7 +379,7 @@ public class GramaticaChomsky extends Gramatica{
                 Set<Producao> producoesDaRegra = regra.getValue();
                 anterior.addAll(term);
                 for (Producao producao : producoesDaRegra) {
-                    if (producao.isTerminal(term)){
+                    if (producao.geraTerminal(term)){
                         term.add(regra.getKey());
                         break;
                     }
@@ -394,6 +394,42 @@ public class GramaticaChomsky extends Gramatica{
             if (!term.contains(regra)){
                 iterador.remove();
             }
-        }        
+        }
+        
+        removerProducoesInuteis();
+    }
+
+    private void removerTerminalComposto(){
+        Map<SimboloNaoTerminal, Set<Producao>> copiaProducoes = new HashMap<>(producoes);
+        
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : copiaProducoes.entrySet()){
+            for (Producao producao : regra.getValue()){
+                if (producao.containsTerminal() && producao.tamanho() > 1) {
+                    List<Simbolo> arrSimbolos = new ArrayList<>(); // simbolos da producao atualizada
+
+                    Iterator<Simbolo> itSimbolo = producao.getSimbolos().iterator();
+                    while (itSimbolo.hasNext()) {
+                        Simbolo simbolo = itSimbolo.next();
+                        if (simbolo instanceof SimboloTerminal) {
+                            // adiciona "A'" como simbolo se encontra "a"
+                            String strNovoSimbolo = simbolo.toString().toUpperCase() + "'";
+                            SimboloNaoTerminalApostrofo novoSimbolo = (SimboloNaoTerminalApostrofo) adicionarSimbolo(strNovoSimbolo);
+                            arrSimbolos.add(novoSimbolo);
+                            List<Simbolo> terminalGerado = new ArrayList<>();
+                            terminalGerado.add(simbolo);
+
+                            adicionarProducao(novoSimbolo, terminalGerado); // adiciona a regra "A' -> a"
+                        } else {
+                            arrSimbolos.add(simbolo);
+                        }
+                        if (!itSimbolo.hasNext()){
+                            // troca a producao "wav" por "wA'v"
+                            removerProducao(regra.getKey(), producao);
+                            adicionarProducao(regra.getKey(), arrSimbolos);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
