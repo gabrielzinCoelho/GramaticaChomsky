@@ -23,6 +23,12 @@ public class Producao implements Comparable<Producao>{
         return simbolos.get(0);
     }
 
+    public void substitui2(Simbolo simbolo) {
+        simbolos.removeLast();
+        simbolos.removeLast();
+        simbolos.addLast(simbolo);
+    }
+
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder(); // evitar criacao de novo objeto a cada concatenacao

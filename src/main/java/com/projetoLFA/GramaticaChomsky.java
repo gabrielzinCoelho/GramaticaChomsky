@@ -8,7 +8,7 @@ import org.paukov.combinatorics3.Generator;
 
 public class GramaticaChomsky extends Gramatica{
     
-    int qtdRegraT;
+    Integer qtdRegraT;
     
     public GramaticaChomsky(Gramatica gramatica){
         super(gramatica); // invoca construtor de copia
@@ -25,6 +25,7 @@ public class GramaticaChomsky extends Gramatica{
             removerSemTerminal();
             removerNaoReach();
             removerTerminalComposto();
+            removerProducaoNaoBin();
         }  
             
     }
@@ -431,4 +432,51 @@ public class GramaticaChomsky extends Gramatica{
             }
         }
     }
+
+    private void removerProducaoNaoBin(){
+        Map<Producao, SimboloNaoTerminalDigito> regrasT = new HashMap<>();
+
+        Map<SimboloNaoTerminal, Set<Producao>> copiaProducoes = new HashMap<>(producoes);
+        
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : copiaProducoes.entrySet()){
+            for (Producao producao : regra.getValue()){
+                if (producao.tamanho() > 2) {
+                    removerProducao(regra.getKey(), producao);
+                    arrumarProducao(regra.getKey(), producao, regrasT);
+                }
+            }
+        }
+    }
+
+    private void arrumarProducao(SimboloNaoTerminal regra, Producao producao, Map<Producao, SimboloNaoTerminalDigito> regrasT) {
+        List<Producao> array = new ArrayList<>();
+        array.add(producao);
+        while (array.get(0).tamanho() > 2) {
+            List<Simbolo> arrSimbolos = new ArrayList<>(array.get(0).getSimbolos());
+            arrSimbolos.remove(0);
+            Producao producaoAtual = new Producao(arrSimbolos);
+            array.add(0, producaoAtual);
+        }
+        while (array.size() > 1) {
+            Producao producaoAtual = array.get(0);
+            array.remove(0);
+            SimboloNaoTerminalDigito simbolo;
+            if (regrasT.containsKey(producaoAtual)) { // ja existe Tn para esta producao
+                simbolo = regrasT.get(producaoAtual);
+            } else { // novo Tn criado
+                qtdRegraT++;
+                simbolo = (SimboloNaoTerminalDigito) adicionarSimbolo("T" + qtdRegraT.toString());
+                regrasT.put(producaoAtual, simbolo);
+            }
+            adicionarProducao(simbolo, producaoAtual.getSimbolos());
+
+            for (Producao prod : array) {
+                if (prod.tamanho() > 2) {
+                    prod.substitui2(simbolo); // troca ABCD por ABTn
+                }
+            }
+        }
+        adicionarProducao(regra, array.get(0).getSimbolos());
+    }
+
 }
