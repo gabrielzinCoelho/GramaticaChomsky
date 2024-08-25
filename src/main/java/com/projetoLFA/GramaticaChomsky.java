@@ -19,6 +19,8 @@ public class GramaticaChomsky extends Gramatica{
         removerCadeia();
         removerSemTerminal();
         removerProducoesInuteis();
+        if(!producoes.isEmpty())  
+            removerNaoReach();
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -231,9 +233,9 @@ public class GramaticaChomsky extends Gramatica{
             
             Set<Producao> conjuntoProducoes = this.producoes.get(variavel);
 
+
             for(SimboloNaoTerminal variavelCadeia : variaveisCadeia){
                 if(variavelCadeia != variavel){
-
                     Set<Producao> conjuntoProducoesCadeia = producoesOriginais.get(variavelCadeia);
                     conjuntoProducoes.addAll(conjuntoProducoesCadeia);
 
@@ -241,6 +243,50 @@ public class GramaticaChomsky extends Gramatica{
             }
         }
 
+    }
+
+    private void removerNaoReach(){
+
+        Set<SimboloNaoTerminal> reach = new HashSet<>();
+
+        reach.add(simboloInicial);
+
+        Set<SimboloNaoTerminal> prevReach = new HashSet<>();
+
+        while(!reach.equals(prevReach)){
+            Set<SimboloNaoTerminal> newReach = new HashSet<>(reach);
+            newReach.removeAll(prevReach);
+            prevReach = reach;
+
+            for(SimboloNaoTerminal variavelReach : newReach){
+                Set<Producao> conjuntoProducoesReach = producoes.get(variavelReach);
+                
+                for(Producao cadaProducao : conjuntoProducoesReach){
+                    List<Simbolo> simbolosProducao = cadaProducao.getSimbolos(); 
+
+                    for(Simbolo simbolo : simbolosProducao){
+                        if(simbolo instanceof SimboloNaoTerminal){
+                            reach.add((SimboloNaoTerminal) simbolo);
+                        }
+                    }
+                }
+            }
+        }
+
+        atualizaGramaticaReach(reach);
+    }
+
+    private void atualizaGramaticaReach(Set<SimboloNaoTerminal> reach){
+        Set<SimboloNaoTerminal> naoReach = new HashSet<>();
+        for(Map.Entry<SimboloNaoTerminal, Set<Producao>> todosSimbolos : producoes.entrySet()){
+            SimboloNaoTerminal simbolo = todosSimbolos.getKey();
+            if(!(reach.contains(simbolo))){
+                naoReach.add(simbolo);
+            }
+        }
+        for(SimboloNaoTerminal simbolosInalcancaveis : naoReach){
+            producoes.remove(simbolosInalcancaveis);
+        }
     }
 
     private static class UtilitariosChomsky{
