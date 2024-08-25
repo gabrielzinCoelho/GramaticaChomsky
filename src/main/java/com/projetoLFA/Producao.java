@@ -64,7 +64,7 @@ public class Producao implements Comparable<Producao>{
 
     public boolean isTerminal(Set<SimboloNaoTerminal> geramTerminal){
         for (Simbolo simbolo : simbolos) {
-            if ((simbolo instanceof SimboloNaoTerminal) && !geramTerminal.contains(simbolo)){
+            if ((simbolo instanceof SimboloNaoTerminal) && geramTerminal != null && !geramTerminal.contains(simbolo)){
                 return false;
             }
         }

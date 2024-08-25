@@ -90,6 +90,21 @@ public class Gramatica{
         return novaProducao;
     }
 
+    public void removerProducoesInuteis(){
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : producoes.entrySet()) {
+            Iterator<Producao> itProducao = regra.getValue().iterator();
+            while (itProducao.hasNext()) {
+                Producao producao = itProducao.next();
+                for (Simbolo simbolo : producao.getSimbolos()) {
+                    if (simbolo instanceof SimboloNaoTerminal && !producoes.containsKey(simbolo)){
+                        itProducao.remove();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public String toString(){
 
         StringBuilder str = new StringBuilder();

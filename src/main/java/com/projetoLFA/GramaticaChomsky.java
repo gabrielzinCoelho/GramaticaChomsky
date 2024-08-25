@@ -18,6 +18,7 @@ public class GramaticaChomsky extends Gramatica{
         removerLambda();
         removerCadeia();
         removerSemTerminal();
+        removerProducoesInuteis();
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -336,12 +337,14 @@ public class GramaticaChomsky extends Gramatica{
                 }
             }
         }
+
+        // remove regras que nao geram terminais do map "producoes"
         Iterator<SimboloNaoTerminal> iterador = producoes.keySet().iterator();
         while (iterador.hasNext()) {
             SimboloNaoTerminal regra = iterador.next();
             if (!term.contains(regra)){
                 iterador.remove();
             }
-        }
+        }        
     }
 }
