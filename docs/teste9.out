@@ -1,0 +1,12 @@
+S → aBC | Ba | a | aB | aC
+A → aA | a
+B → AC | aA | a | cA | b | c
+C → cA | b | c | aA | a
+
+S → a | BA' | A'B | A'C | A'T1
+A → a | A'A
+B → AC | a | b | c | A'A | C'A
+C → b | c | a | C'A | A'A
+A' → a
+C' → c
+T1 → BC

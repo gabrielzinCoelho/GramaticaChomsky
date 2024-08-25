@@ -1,0 +1,15 @@
+S' → aAb | bAa | Ba | aS | ab | ba | a
+S → aAb | bAa | Ba | aS | ab | ba | a
+A → bB | b
+B → cBc | Ba | aB | cc | a
+
+S' → a | BA' | A'S | A'B' | B'A' | A'T1 | B'T2
+S → a | BA' | A'S | A'B' | B'A' | A'T1 | B'T2
+A → b | B'B
+B → a | BA' | A'B | C'C' | C'T3
+A' → a
+B' → b
+C' → c
+T1 → AB'
+T2 → AA'
+T3 → BC'

@@ -1,0 +1,14 @@
+S → aA | bC | .
+A → bAba | ba
+C → cCAba | c
+
+S → . | A'A | B'C
+A → B'A' | B'T1
+C → c | C'T3
+A' → a
+B' → b
+C' → c
+T1 → AT2
+T2 → B'A'
+T3 → CT4
+T4 → AT2

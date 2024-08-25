@@ -1,0 +1,7 @@
+S' → BS | b
+S → BS | b
+B → b
+
+S' → BS | b
+S → BS | b
+B → b

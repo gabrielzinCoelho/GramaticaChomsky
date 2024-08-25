@@ -1,0 +1,14 @@
+S → ACA | CA | AA | AC | . | aAa | aa | cC | c | bB | b
+A → aAa | aa | bB | b | cC | c
+B → bB | b
+C → cC | c
+
+S → CA | AA | AC | c | b | . | A'A' | C'C | B'B | AT1 | A'T2
+A → b | c | A'A' | B'B | C'C | A'T2
+B → b | B'B
+C → c | C'C
+A' → a
+C' → c
+B' → b
+T1 → CA
+T2 → AA'

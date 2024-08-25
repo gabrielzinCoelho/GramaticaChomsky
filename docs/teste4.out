@@ -1,0 +1,8 @@
+S → aXb | ab
+X → aXb | ab
+
+S → A'B' | A'T1
+X → A'B' | A'T1
+A' → a
+B' → b
+T1 → XB'

@@ -1,0 +1,8 @@
+S' → aS | b | aA | a | c
+S → aS | b | aA | a | c
+A → aA | a | c | b
+
+S' → b | a | c | A'S | A'A
+S → b | a | c | A'S | A'A
+A → a | c | b | A'A
+A' → a
