@@ -8,19 +8,26 @@ import org.paukov.combinatorics3.Generator;
 
 public class GramaticaChomsky extends Gramatica{
     
+    Integer qtdRegraT;
+    
     public GramaticaChomsky(Gramatica gramatica){
         super(gramatica); // invoca construtor de copia
+        qtdRegraT = 0;
         aplicarFormaNormal();
     }
 
     private void aplicarFormaNormal(){
-        removerRecursaoSimboloInicial();
-        removerLambda();
-        removerCadeia();
-        removerSemTerminal();
-        removerProducoesInuteis();
-        if(!producoes.isEmpty())  
+
+        if(!producoes.isEmpty()){
+            removerRecursaoSimboloInicial();
+            removerLambda();
+            removerCadeia();
+            removerSemTerminal();
             removerNaoReach();
+            removerTerminalComposto();
+            removerProducaoNaoBin();
+        }  
+            
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -45,7 +52,7 @@ public class GramaticaChomsky extends Gramatica{
 
         //S1 -> S
         if(possuiRecursao){
-            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S1");
+            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S'");
             adicionarProducao(novoSimboloInicial, new ArrayList<Simbolo>(Arrays.asList(simboloInicial)));
             this.simboloInicial = novoSimboloInicial;
         }
@@ -363,7 +370,7 @@ public class GramaticaChomsky extends Gramatica{
         for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : producoes.entrySet()) {
             Set<Producao> producoesDaRegra = regra.getValue();
             for (Producao producao : producoesDaRegra) {
-                if (producao.isTerminal(term)){
+                if (producao.geraTerminal(term)){
                     term.add(regra.getKey());
                     break;
                 }
@@ -376,7 +383,7 @@ public class GramaticaChomsky extends Gramatica{
                 Set<Producao> producoesDaRegra = regra.getValue();
                 anterior.addAll(term);
                 for (Producao producao : producoesDaRegra) {
-                    if (producao.isTerminal(term)){
+                    if (producao.geraTerminal(term)){
                         term.add(regra.getKey());
                         break;
                     }
@@ -391,6 +398,85 @@ public class GramaticaChomsky extends Gramatica{
             if (!term.contains(regra)){
                 iterador.remove();
             }
-        }        
+        }
+        
+        removerProducoesInuteis();
     }
+
+    private void removerTerminalComposto(){
+        Map<SimboloNaoTerminal, Set<Producao>> copiaProducoes = new HashMap<>(producoes);
+        
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : copiaProducoes.entrySet()){
+            for (Producao producao : regra.getValue()){
+                if (producao.containsTerminal() && producao.tamanho() > 1) {
+                    List<Simbolo> arrSimbolos = new ArrayList<>(); // simbolos da producao atualizada
+
+                    for (Simbolo simbolo : producao.getSimbolos()) {
+                        if (simbolo instanceof SimboloTerminal) {
+                            // adiciona "A'" como simbolo se encontra "a"
+                            String strNovoSimbolo = simbolo.toString().toUpperCase() + "'";
+                            SimboloNaoTerminalApostrofo novoSimbolo = (SimboloNaoTerminalApostrofo) adicionarSimbolo(strNovoSimbolo);
+                            arrSimbolos.add(novoSimbolo);
+                            List<Simbolo> terminalGerado = new ArrayList<>();
+                            terminalGerado.add(simbolo);
+
+                            adicionarProducao(novoSimbolo, terminalGerado); // adiciona a regra "A' -> a"
+                        } else {
+                            arrSimbolos.add(simbolo);
+                        }
+                    }
+                    // troca a producao "wav" por "wA'v"
+                    removerProducao(regra.getKey(), producao);
+                    adicionarProducao(regra.getKey(), arrSimbolos);
+                }
+            }
+        }
+    }
+
+    private void removerProducaoNaoBin(){
+        Map<Producao, SimboloNaoTerminalDigito> regrasT = new HashMap<>();
+
+        Map<SimboloNaoTerminal, Set<Producao>> copiaProducoes = new HashMap<>(producoes);
+        
+        for (Map.Entry<SimboloNaoTerminal, Set<Producao>> regra : copiaProducoes.entrySet()){
+            for (Producao producao : regra.getValue()){
+                if (producao.tamanho() > 2) {
+                    removerProducao(regra.getKey(), producao);
+                    arrumarProducao(regra.getKey(), producao, regrasT);
+                }
+            }
+        }
+    }
+
+    private void arrumarProducao(SimboloNaoTerminal regra, Producao producao, Map<Producao, SimboloNaoTerminalDigito> regrasT) {
+        List<Producao> array = new ArrayList<>();
+        array.add(producao);
+        while (array.get(0).tamanho() > 2) {
+            List<Simbolo> arrSimbolos = new ArrayList<>(array.get(0).getSimbolos());
+            arrSimbolos.remove(0);
+            Producao producaoAtual = new Producao(arrSimbolos);
+            array.add(0, producaoAtual);
+        }
+        while (array.size() > 1) {
+            Producao producaoAtual = array.get(0);
+            array.remove(0);
+            SimboloNaoTerminalDigito simbolo;
+            if (regrasT.containsKey(producaoAtual)) { // ja existe Tn para esta producao
+                simbolo = regrasT.get(producaoAtual);
+            } else { // novo Tn criado
+                qtdRegraT++;
+                simbolo = (SimboloNaoTerminalDigito) adicionarSimbolo("T" + qtdRegraT.toString());
+                regrasT.put(producaoAtual, simbolo);
+            }
+            adicionarProducao(simbolo, producaoAtual.getSimbolos());
+
+            for (Producao prod : array) {
+                if (prod.tamanho() > 2) {
+                    prod.substitui2(simbolo); // troca ABCD por ABTn
+                }
+            }
+        }
+        adicionarProducao(regra, array.get(0).getSimbolos());
+    }
+
 }
