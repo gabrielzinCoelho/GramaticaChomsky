@@ -11,8 +11,4 @@ public class SimboloTerminal extends Simbolo {
         super(umSimbolo.valor);
     }
 
-    public String getValor(){
-        return Character.toString(valor);
-    }
-
 }

@@ -14,13 +14,16 @@ public class GramaticaChomsky extends Gramatica{
     }
 
     private void aplicarFormaNormal(){
-        removerRecursaoSimboloInicial();
-        removerLambda();
-        removerCadeia();
-        removerSemTerminal();
-        removerProducoesInuteis();
-        if(!producoes.isEmpty())  
+
+        if(!producoes.isEmpty()){
+            removerRecursaoSimboloInicial();
+            removerLambda();
+            removerCadeia();
+            removerSemTerminal();
+            removerProducoesInuteis();
             removerNaoReach();
+        }  
+            
     }
 
     private void removerRecursaoSimboloInicial(){
@@ -45,7 +48,7 @@ public class GramaticaChomsky extends Gramatica{
 
         //S1 -> S
         if(possuiRecursao){
-            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S1");
+            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S'");
             adicionarProducao(novoSimboloInicial, new ArrayList<Simbolo>(Arrays.asList(simboloInicial)));
             this.simboloInicial = novoSimboloInicial;
         }
