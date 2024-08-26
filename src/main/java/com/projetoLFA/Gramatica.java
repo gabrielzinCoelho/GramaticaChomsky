@@ -117,8 +117,19 @@ public class Gramatica{
 
         StringBuilder str = new StringBuilder();
 
+        Set<Producao> producaoInicial = this.producoes.get(simboloInicial);
+        str.append(simboloInicial).append(" -> ");
+
+        List<String> listaProducoesIniciais = producaoInicial.stream()
+            .sorted()
+            .map(Producao::toString)
+            .collect(Collectors.toList());
+
+        str.append(String.join(" | ", listaProducoesIniciais)).append("\n");
+
         producoes.keySet().stream()
             .sorted()
+            .filter(key -> !key.equals(simboloInicial))
             .forEach(variavel -> {
                 Set<Producao> producao = this.producoes.get(variavel);
 

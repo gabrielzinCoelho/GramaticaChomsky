@@ -51,7 +51,7 @@ public class GramaticaChomsky extends Gramatica{
 
         //S1 -> S
         if(possuiRecursao){
-            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S'");
+            SimboloNaoTerminal novoSimboloInicial = (SimboloNaoTerminal)adicionarSimbolo("S1");
             adicionarProducao(novoSimboloInicial, new ArrayList<Simbolo>(Arrays.asList(simboloInicial)));
             this.simboloInicial = novoSimboloInicial;
         }

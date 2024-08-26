@@ -24,9 +24,9 @@ public class Producao implements Comparable<Producao>{
     }
 
     public void substitui2por1(Simbolo simbolo) {
-        simbolos.removeLast();
-        simbolos.removeLast();
-        simbolos.addLast(simbolo);
+        simbolos.remove(simbolos.size()-1);
+        simbolos.remove(simbolos.size()-1);
+        simbolos.add(simbolos.size()-1, simbolo);
     }
 
     @Override
