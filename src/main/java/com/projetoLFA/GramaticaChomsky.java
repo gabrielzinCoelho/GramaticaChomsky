@@ -1,7 +1,6 @@
 package com.projetoLFA;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.paukov.combinatorics3.Generator;
