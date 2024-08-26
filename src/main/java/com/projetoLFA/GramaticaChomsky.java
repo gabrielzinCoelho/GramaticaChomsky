@@ -262,7 +262,7 @@ public class GramaticaChomsky extends Gramatica{
         while(!reach.equals(prevReach)){
             Set<SimboloNaoTerminal> newReach = new HashSet<>(reach);
             newReach.removeAll(prevReach);
-            prevReach = reach;
+            prevReach.addAll(reach);
 
             for(SimboloNaoTerminal variavelReach : newReach){
                 Set<Producao> conjuntoProducoesReach = producoes.get(variavelReach);
@@ -471,7 +471,7 @@ public class GramaticaChomsky extends Gramatica{
 
             for (Producao prod : array) {
                 if (prod.tamanho() > 2) {
-                    prod.substitui2(simbolo); // troca ABCD por ABTn
+                    prod.substitui2por1(simbolo); // troca ABCD por ABTn
                 }
             }
         }

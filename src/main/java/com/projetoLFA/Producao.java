@@ -23,7 +23,7 @@ public class Producao implements Comparable<Producao>{
         return simbolos.get(0);
     }
 
-    public void substitui2(Simbolo simbolo) {
+    public void substitui2por1(Simbolo simbolo) {
         simbolos.removeLast();
         simbolos.removeLast();
         simbolos.addLast(simbolo);
