@@ -8,23 +8,8 @@ public class App
 {
     public static void main(String[] args){
 
-        String textoGramatica = "";
-        try {
-            File arquivo = new File(args[0]);
-            Scanner texto = new Scanner(arquivo);
-            while (texto.hasNextLine()) {
-                String linha = texto.nextLine();
-                linha = linha.replace(" ", "");
-                textoGramatica += (linha + "\n");
-            }
-            texto.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Ocorreu um erro.");
-            e.printStackTrace();
-        }
-
-        Gramatica gramatica = new Gramatica(textoGramatica);
+        Gramatica gramatica = new Gramatica(GerenciarArquivo.lerEntrada(args[0]));
         GramaticaChomsky gramaticaChomsky = new GramaticaChomsky(gramatica);
-        System.out.println(gramaticaChomsky);
+        GerenciarArquivo.escreverSaida(args[1], gramaticaChomsky.toString());
     }
 }
