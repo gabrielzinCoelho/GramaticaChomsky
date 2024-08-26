@@ -1,15 +1,15 @@
-S → aABC | a
-A → aA | a
-B → bcB | bc
-C → cC | c
+S -> aABC | a
+A -> aA | a
+B -> bcB | bc
+C -> cC | c
 
-S → a | A'T1
-A → a | A'A
-B → B'C' | B'T3
-C → c | C'C
-A' → a
-B' → b
-C' → c
-T1 → AT2
-T2 → BC
-T3 → C'B
+S -> a | A'T1
+A -> a | A'A
+B -> B'C' | B'T3
+C -> c | C'C
+A' -> a
+B' -> b
+C' -> c
+T1 -> AT2
+T2 -> BC
+T3 -> C'B

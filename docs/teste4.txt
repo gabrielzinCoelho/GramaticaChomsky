@@ -1,2 +1,2 @@
-S → aXb | ab
-X → aXb | ab
+S -> aXb | ab
+X -> aXb | ab
