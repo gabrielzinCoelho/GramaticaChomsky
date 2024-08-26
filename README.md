@@ -1,5 +1,12 @@
 # Gramática de Chomsky
 
+## Desenvolvedores
+
+* [Eduardo Coelho](github.com/eduardocoelho1)
+* [Estevão Augusto](github.com/EstevaoAugusto)
+* [Felipe Oliveira](github.com/FelipeOliveira30)
+* [Gabriel Coelho Costa](github.com/gabrielzinCoelho)
+
 ## Objetivo
 
 Projeto prático desenvolvido para a disciplina de Linguagens Formais e Autômatos lecionada na UFLA.
