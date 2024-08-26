@@ -2,10 +2,10 @@
 
 ## Desenvolvedores
 
-* [Eduardo Coelho](github.com/eduardocoelho1)
-* [Estevão Augusto](github.com/EstevaoAugusto)
-* [Felipe Oliveira](github.com/FelipeOliveira30)
-* [Gabriel Coelho Costa](github.com/gabrielzinCoelho)
+* [Eduardo Coelho](https://github.com/eduardocoelho1)
+* [Estevão Augusto](https://github.com/EstevaoAugusto)
+* [Felipe Oliveira](https://github.com/FelipeOliveira30)
+* [Gabriel Coelho Costa](https://github.com/gabrielzinCoelho)
 
 ## Objetivo
 
